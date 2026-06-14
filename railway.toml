@@ -1,6 +1,4 @@
-# Web-сервис (Next.js mini app)
-# В Railway создайте второй сервис из того же репо для бота:
-# Start Command: npm run bot
+# Web + Telegram bot в одном Railway-сервисе
 
 [build]
 builder = "NIXPACKS"
