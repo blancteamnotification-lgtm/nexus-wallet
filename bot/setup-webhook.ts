@@ -1,5 +1,5 @@
 import { getBot, isBotConfigured } from "./app";
-import { getWebhookUrl } from "./config";
+import { getWebhookUrl, resolveWebAppUrl } from "./config";
 
 export async function setupBotWebhook(): Promise<void> {
   if (process.env.NODE_ENV !== "production") {
@@ -7,13 +7,16 @@ export async function setupBotWebhook(): Promise<void> {
   }
 
   if (!isBotConfigured()) {
-    console.warn("Telegram bot webhook skipped — missing TELEGRAM_BOT_TOKEN or WEBAPP_URL");
+    console.warn("Telegram bot webhook skipped — missing TELEGRAM_BOT_TOKEN or public URL");
     return;
   }
 
   try {
     const bot = getBot();
     const webhookUrl = getWebhookUrl();
+    const webAppUrl = resolveWebAppUrl();
+
+    console.info("Configuring Telegram bot webhook...", { webAppUrl, webhookUrl });
 
     await bot.api.deleteWebhook({ drop_pending_updates: true });
 

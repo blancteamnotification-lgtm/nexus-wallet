@@ -14,24 +14,56 @@ function requireEnv(name: string): string {
   return value;
 }
 
-function requireHttpsUrl(name: string): string {
-  const value = requireEnv(name);
+function normalizeUrlInput(value: string): string {
+  const cleaned = value.trim().replace(/^["']|["']$/g, "");
 
-  try {
-    const url = new URL(value);
-    if (url.protocol !== "https:") {
-      throw new Error(`${name} must use HTTPS`);
-    }
-    return url.toString().replace(/\/$/, "");
-  } catch {
-    throw new Error(`${name} must be a valid HTTPS URL`);
+  if (/^https?:\/\//i.test(cleaned)) {
+    return cleaned;
   }
+
+  return `https://${cleaned.replace(/^\/+/, "")}`;
+}
+
+export function resolveWebAppUrl(): string | null {
+  const candidates = [
+    process.env.WEBAPP_URL,
+    process.env.NEXT_PUBLIC_WEBAPP_URL,
+    process.env.RAILWAY_PUBLIC_DOMAIN
+      ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+      : undefined,
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate?.trim()) {
+      continue;
+    }
+
+    try {
+      const url = new URL(normalizeUrlInput(candidate));
+      if (url.protocol !== "https:") {
+        continue;
+      }
+      return url.toString().replace(/\/$/, "");
+    } catch {
+      continue;
+    }
+  }
+
+  return null;
 }
 
 export function getBotConfig(): BotConfig {
+  const webAppUrl = resolveWebAppUrl();
+
+  if (!webAppUrl) {
+    throw new Error(
+      "WEBAPP_URL must be a valid HTTPS URL (or set RAILWAY_PUBLIC_DOMAIN on Railway)",
+    );
+  }
+
   return {
     token: requireEnv("TELEGRAM_BOT_TOKEN"),
-    webAppUrl: requireHttpsUrl("WEBAPP_URL"),
+    webAppUrl,
     welcomeImagePath: path.join(
       process.cwd(),
       "public/images/welcome-bot.png",
@@ -48,4 +80,10 @@ MAKE YOUR FIRST DEPOSIT TODAY AND GET $25 BONUS ON YOUR BALANCE INSTANTLY`;
 export function getWebhookUrl(): string {
   const { webAppUrl } = getBotConfig();
   return `${webAppUrl}/api/telegram/webhook`;
+}
+
+export function isBotConfigured(): boolean {
+  return Boolean(
+    process.env.TELEGRAM_BOT_TOKEN?.trim() && resolveWebAppUrl(),
+  );
 }

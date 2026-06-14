@@ -1,6 +1,6 @@
 import fs from "fs";
 import { Bot, InputFile, type Context } from "grammy";
-import { getBotConfig, startMessageCaption } from "./config";
+import { getBotConfig, isBotConfigured, startMessageCaption } from "./config";
 
 function buildStartKeyboard(webAppUrl: string) {
   return {
@@ -91,6 +91,4 @@ export function getBot(): Bot {
   return bot;
 }
 
-export function isBotConfigured(): boolean {
-  return Boolean(process.env.TELEGRAM_BOT_TOKEN?.trim() && process.env.WEBAPP_URL?.trim());
-}
+export { isBotConfigured } from "./config";
