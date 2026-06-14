@@ -4,50 +4,12 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const port = process.env.PORT || "3000";
-const bin = (name) => path.join(projectRoot, "node_modules", ".bin", name);
+const nextBin = path.join(projectRoot, "node_modules", ".bin", "next");
 
-let webProcess = null;
-let botProcess = null;
+console.info("Starting Nexus Wallet...", { port });
 
-function startBot() {
-  if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.WEBAPP_URL) {
-    console.warn(
-      "TELEGRAM_BOT_TOKEN or WEBAPP_URL is missing — Telegram bot will not start",
-    );
-    return;
-  }
-
-  botProcess = spawn(bin("tsx"), ["bot/index.ts"], {
-    cwd: projectRoot,
-    stdio: "inherit",
-    env: process.env,
-  });
-
-  botProcess.on("exit", (code, signal) => {
-    console.error("Bot process exited", { code, signal });
-    botProcess = null;
-  });
-}
-
-function shutdown(signal) {
-  console.info(`Shutting down (${signal})...`);
-
-  if (botProcess && !botProcess.killed) {
-    botProcess.kill("SIGTERM");
-  }
-
-  if (webProcess && !webProcess.killed) {
-    webProcess.kill("SIGTERM");
-  }
-
-  setTimeout(() => process.exit(0), 1000).unref();
-}
-
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-process.on("SIGINT", () => shutdown("SIGINT"));
-
-webProcess = spawn(
-  bin("next"),
+const webProcess = spawn(
+  nextBin,
   ["start", "-H", "0.0.0.0", "-p", port],
   {
     cwd: projectRoot,
@@ -61,6 +23,10 @@ webProcess.on("exit", (code, signal) => {
   process.exit(code ?? 1);
 });
 
-setTimeout(startBot, 5000);
+process.on("SIGTERM", () => {
+  webProcess.kill("SIGTERM");
+});
 
-console.info("Starting Nexus Wallet web server...", { port });
+process.on("SIGINT", () => {
+  webProcess.kill("SIGINT");
+});
