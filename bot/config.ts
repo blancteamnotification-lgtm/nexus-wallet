@@ -1,16 +1,30 @@
 import path from "path";
 
 function requireEnv(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
   return value;
 }
 
+function requireHttpsUrl(name: string): string {
+  const value = requireEnv(name);
+
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:") {
+      throw new Error(`${name} must use HTTPS`);
+    }
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    throw new Error(`${name} must be a valid HTTPS URL`);
+  }
+}
+
 export const botConfig = {
   token: requireEnv("TELEGRAM_BOT_TOKEN"),
-  webAppUrl: requireEnv("WEBAPP_URL"),
+  webAppUrl: requireHttpsUrl("WEBAPP_URL"),
   welcomeImagePath: path.join(
     process.cwd(),
     "public/images/welcome-bot.png",
