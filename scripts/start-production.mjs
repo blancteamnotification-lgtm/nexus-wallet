@@ -1,44 +1,66 @@
 import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
+const projectRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const port = process.env.PORT || "3000";
-const children = [];
+const bin = (name) => path.join(projectRoot, "node_modules", ".bin", name);
 
-function spawnProcess(label, command, args) {
-  const child = spawn(command, args, {
+let webProcess = null;
+let botProcess = null;
+
+function startBot() {
+  if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.WEBAPP_URL) {
+    console.warn(
+      "TELEGRAM_BOT_TOKEN or WEBAPP_URL is missing — Telegram bot will not start",
+    );
+    return;
+  }
+
+  botProcess = spawn(bin("tsx"), ["bot/index.ts"], {
+    cwd: projectRoot,
     stdio: "inherit",
     env: process.env,
   });
 
-  child.on("exit", (code, signal) => {
-    console.error(`${label} exited`, { code, signal });
-    shutdown(label, code ?? 1);
+  botProcess.on("exit", (code, signal) => {
+    console.error("Bot process exited", { code, signal });
+    botProcess = null;
   });
-
-  children.push(child);
-  return child;
 }
 
-function shutdown(reason, exitCode = 0) {
-  console.info(`Shutting down (${reason})...`);
+function shutdown(signal) {
+  console.info(`Shutting down (${signal})...`);
 
-  for (const child of children) {
-    if (!child.killed) {
-      child.kill("SIGTERM");
-    }
+  if (botProcess && !botProcess.killed) {
+    botProcess.kill("SIGTERM");
   }
 
-  setTimeout(() => process.exit(exitCode), 1000).unref();
+  if (webProcess && !webProcess.killed) {
+    webProcess.kill("SIGTERM");
+  }
+
+  setTimeout(() => process.exit(0), 1000).unref();
 }
 
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
 
-if (process.env.TELEGRAM_BOT_TOKEN && process.env.WEBAPP_URL) {
-  spawnProcess("Bot", "npx", ["tsx", "bot/index.ts"]);
-} else {
-  console.warn(
-    "TELEGRAM_BOT_TOKEN or WEBAPP_URL is missing — Telegram bot will not start",
-  );
-}
+webProcess = spawn(
+  bin("next"),
+  ["start", "-H", "0.0.0.0", "-p", port],
+  {
+    cwd: projectRoot,
+    stdio: "inherit",
+    env: process.env,
+  },
+);
 
-spawnProcess("Web", "npx", ["next", "start", "-H", "0.0.0.0", "-p", port]);
+webProcess.on("exit", (code, signal) => {
+  console.error("Web process exited", { code, signal });
+  process.exit(code ?? 1);
+});
+
+setTimeout(startBot, 5000);
+
+console.info("Starting Nexus Wallet web server...", { port });
