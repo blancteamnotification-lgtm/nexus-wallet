@@ -1,0 +1,37 @@
+"use client";
+
+import { StarburstDecoration } from "@/shared/components/Icons";
+import { ScreenLayout } from "@/shared/components/ScreenLayout";
+
+type WelcomeScreenProps = {
+  onCreateWallet: () => void;
+};
+
+export function WelcomeScreen({ onCreateWallet }: WelcomeScreenProps) {
+  return (
+    <ScreenLayout>
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <StarburstDecoration />
+
+        <div className="relative z-10 flex flex-col gap-2 px-4 pt-[54px]">
+          <h1 className="text-[38px] font-black uppercase leading-none tracking-[-0.4px] text-white">
+            NEXUS - new generation Crypto wallet
+          </h1>
+          <p className="text-lg text-[#08f]">
+            Get $25 bonus after your first deposit
+          </p>
+        </div>
+
+        <div className="relative z-20 mt-auto px-4 pb-3">
+          <button
+            className="relative z-20 w-full rounded-2xl bg-black py-3.5 text-[17px] font-semibold tracking-[0.1px] text-white"
+            onClick={onCreateWallet}
+            type="button"
+          >
+            Create wallet
+          </button>
+        </div>
+      </div>
+    </ScreenLayout>
+  );
+}
