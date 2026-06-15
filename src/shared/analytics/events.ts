@@ -67,6 +67,22 @@ export const ANALYTICS_EVENTS = {
     name: "telegram_back_clicked",
     description: "Нажата системная кнопка Назад Telegram (закрытие sheet или возврат с депозита).",
   },
+  waitlist_viewed: {
+    name: "waitlist_viewed",
+    description: "Пользователь увидел экран waitlist (до вступления в лист ожидания).",
+  },
+  waitlist_joined_viewed: {
+    name: "waitlist_joined_viewed",
+    description: "Пользователь увидел экран waitlist после вступления в лист ожидания.",
+  },
+  waitlist_join_clicked: {
+    name: "waitlist_join_clicked",
+    description: "Нажата кнопка Join waitlist на экране waitlist.",
+  },
+  waitlist_invite_friends_clicked: {
+    name: "waitlist_invite_friends_clicked",
+    description: "Нажата кнопка Invite friends на экране waitlist.",
+  },
 } as const;
 
 export type AnalyticsEventName = keyof typeof ANALYTICS_EVENTS;
