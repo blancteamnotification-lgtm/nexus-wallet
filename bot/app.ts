@@ -1,4 +1,3 @@
-import fs from "fs";
 import { Bot, InputFile, type Context } from "grammy";
 import { getBotConfig, isBotConfigured, startMessageCaption } from "./config";
 
@@ -15,18 +14,25 @@ function buildStartKeyboard(webAppUrl: string) {
   };
 }
 
-async function sendStartMessage(ctx: Context, webAppUrl: string, welcomeImagePath: string) {
+async function sendStartMessage(
+  ctx: Context,
+  webAppUrl: string,
+  welcomeImagePath: string,
+) {
   const keyboard = buildStartKeyboard(webAppUrl);
 
-  if (fs.existsSync(welcomeImagePath)) {
+  try {
     await ctx.replyWithPhoto(new InputFile(welcomeImagePath), {
       caption: startMessageCaption,
       reply_markup: keyboard,
     });
     return;
+  } catch (error) {
+    console.error("Start message with photo failed", {
+      path: welcomeImagePath,
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
-
-  console.error("Welcome image not found", { path: welcomeImagePath });
 
   await ctx.reply(startMessageCaption, {
     reply_markup: keyboard,
@@ -45,7 +51,7 @@ function registerHandlers(bot: Bot, webAppUrl: string, welcomeImagePath: string)
       await sendStartMessage(ctx, webAppUrl, welcomeImagePath);
       return;
     } catch (error) {
-      console.error("Start message with photo failed", {
+      console.error("Start message failed", {
         userId: ctx.from?.id,
         error: error instanceof Error ? error.message : String(error),
       });

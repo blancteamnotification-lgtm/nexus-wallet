@@ -1,5 +1,3 @@
-import path from "path";
-
 export type BotConfig = {
   token: string;
   webAppUrl: string;
@@ -64,10 +62,7 @@ export function getBotConfig(): BotConfig {
   return {
     token: requireEnv("TELEGRAM_BOT_TOKEN"),
     webAppUrl,
-    welcomeImagePath: path.join(
-      process.cwd(),
-      "public/images/welcome-bot.png",
-    ),
+    welcomeImagePath: `${process.cwd()}/public/images/welcome-bot.png`,
   };
 }
 
