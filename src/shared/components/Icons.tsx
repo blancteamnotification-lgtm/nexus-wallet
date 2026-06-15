@@ -131,7 +131,7 @@ export function PersonAddIcon() {
 
 export function StarburstDecoration() {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[417px] overflow-hidden">
+    <div className="nx-starburst pointer-events-none absolute inset-x-0 bottom-0 z-0 h-[417px] overflow-hidden">
       <Image
         alt=""
         className="pointer-events-none absolute left-[-56%] top-[-23%] h-[201%] w-[219%] max-w-none"

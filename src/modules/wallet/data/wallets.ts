@@ -1,48 +1,54 @@
 import type { Asset, Chain } from "../types";
 
-/** Замените адреса на свои реальные кошельки */
 export const CHAINS: Chain[] = [
   {
     id: "solana",
     name: "Solana",
-    address: "9TpZsJHdE3vqmR4YaK8mN2xP7wQ5vL3bF6pCzWDtLqHVZL",
+    address: "DrkXj6rAfPxZGS335WZH1iSaHCtp7o4iLhY7oKJwqTeS",
     icon: "/images/Solana-Logo.png",
     warningNetwork: "Solana",
   },
   {
     id: "ethereum",
     name: "Ethereum",
-    address: "0x9TpZsJHdE3vqmR4YaK8mN2xP7wQ5vL3bF6pCzWDtLqHVZL",
+    address: "0xF988264E8f5ab682e6095107E72aB84100562570",
     icon: "/icons/ethereum.svg",
     warningNetwork: "Ethereum",
   },
   {
     id: "bitcoin",
     name: "Bitcoin",
-    address: "bc1p9TpZsJHdE3vqmR4YaK8mN2xP7wQ5vL3bF640et",
+    address: "bc1q0jwnkjcfg8vw9lgkdht0rut9s6e5f0c6gqyzt2",
     icon: "/images/Bitcoin.svg.png",
     warningNetwork: "Bitcoin",
   },
   {
     id: "base",
     name: "Base",
-    address: "0x6B5F9TpZsJHdE3vqmR4YaK8mN2xP7wQ5vL3b7DeF",
+    address: "0xF988264E8f5ab682e6095107E72aB84100562570",
     icon: "/images/base_logo.png",
     warningNetwork: "Base",
   },
   {
     id: "polygon",
     name: "Polygon",
-    address: "0x6B5F9TpZsJHdE3vqmR4YaK8mN2xP7wQ5vL3b7DeF",
+    address: "0xF988264E8f5ab682e6095107E72aB84100562570",
     icon: "/images/Polygon_Icon.svg.png",
     warningNetwork: "Polygon",
   },
   {
     id: "tron",
     name: "TRON",
-    address: "TX6B5F9TpZsJHdE3vqmR4YaK8mN2xP7wQ5vL3b7DeF",
+    address: "TGZ5NfwhrAJ58uTD52xABrMzinXBC7CvEk",
     icon: "/images/tron_logo.png",
     warningNetwork: "TRON",
+  },
+  {
+    id: "ton",
+    name: "TON",
+    address: "UQCqQE_Sa8UetcvRlELfXdJcOIhwIYSBEWLGFx32chPhb6zL",
+    icon: "/images/ton-logo.png",
+    warningNetwork: "TON",
   },
 ];
 

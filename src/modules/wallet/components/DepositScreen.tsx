@@ -1,9 +1,9 @@
 "use client";
 
-import { QRCodeSVG } from "qrcode.react";
 import Image from "next/image";
 import type { Chain } from "../types";
 import { truncateAddress } from "../data/wallets";
+import { ChainQrCode } from "./ChainQrCode";
 import { ChevronDownIcon, CopyIcon } from "@/shared/components/Icons";
 import { ScreenLayout } from "@/shared/components/ScreenLayout";
 
@@ -40,24 +40,7 @@ export function DepositScreen({
             <ChevronDownIcon />
           </button>
 
-          <div className="relative rounded-2xl bg-white p-3">
-            <QRCodeSVG
-              bgColor="#ffffff"
-              fgColor="#000000"
-              level="M"
-              size={226}
-              value={chain.address}
-            />
-            <div className="absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-black p-1">
-              <Image
-                alt={chain.name}
-                className="size-10 rounded-full object-cover"
-                height={40}
-                src={chain.icon}
-                width={40}
-              />
-            </div>
-          </div>
+          <ChainQrCode chain={chain} />
 
           <p className="text-center text-sm text-white/70">
             {chain.name} network deposit address

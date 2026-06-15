@@ -4,7 +4,8 @@ export type ChainId =
   | "bitcoin"
   | "base"
   | "polygon"
-  | "tron";
+  | "tron"
+  | "ton";
 
 export type Chain = {
   id: ChainId;
