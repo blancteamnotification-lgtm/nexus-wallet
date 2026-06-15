@@ -7,6 +7,8 @@ import {
   TrendUpIcon,
 } from "@/shared/components/Icons";
 import { ScreenLayout } from "@/shared/components/ScreenLayout";
+import { trackEvent } from "@/shared/analytics/amplitude";
+import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
 
 type MainScreenProps = {
   userName: string;
@@ -21,6 +23,8 @@ export function MainScreen({
   onTopUp,
   onInviteFriends,
 }: MainScreenProps) {
+  useTrackScreenView("main_viewed");
+
   return (
     <ScreenLayout className="pb-0">
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto pt-4">
@@ -37,7 +41,10 @@ export function MainScreen({
           </p>
           <button
             className="flex items-center gap-1.5 rounded-[20px] bg-white/[0.08] px-3 py-2 text-[15px] font-semibold text-white/95"
-            onClick={onInviteFriends}
+            onClick={() => {
+              trackEvent("invite_friends_clicked");
+              onInviteFriends();
+            }}
             type="button"
           >
             <PersonAddIcon />
@@ -57,7 +64,10 @@ export function MainScreen({
         <div className="px-4 pt-3">
           <button
             className="w-full rounded-2xl bg-[#007aff] py-3.5 text-[17px] font-semibold text-white"
-            onClick={onAddFunds}
+            onClick={() => {
+              trackEvent("add_funds_clicked");
+              onAddFunds();
+            }}
             type="button"
           >
             Add funds
@@ -77,7 +87,10 @@ export function MainScreen({
               </div>
               <button
                 className="w-full rounded-[20px] bg-white px-3 py-2 text-[15px] font-semibold text-black"
-                onClick={onTopUp}
+                onClick={() => {
+                  trackEvent("top_up_clicked");
+                  onTopUp();
+                }}
                 type="button"
               >
                 Top up

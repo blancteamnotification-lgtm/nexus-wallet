@@ -2,12 +2,16 @@
 
 import { StarburstDecoration } from "@/shared/components/Icons";
 import { ScreenLayout } from "@/shared/components/ScreenLayout";
+import { trackEvent } from "@/shared/analytics/amplitude";
+import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
 
 type WelcomeScreenProps = {
   onCreateWallet: () => void;
 };
 
 export function WelcomeScreen({ onCreateWallet }: WelcomeScreenProps) {
+  useTrackScreenView("welcome_viewed");
+
   return (
     <ScreenLayout>
       <div className="nx-welcome relative flex min-h-0 flex-1 flex-col">
@@ -25,7 +29,10 @@ export function WelcomeScreen({ onCreateWallet }: WelcomeScreenProps) {
         <div className="nx-welcome-footer relative z-20 mt-auto px-4 pb-3">
           <button
             className="nx-welcome-btn relative z-20 w-full rounded-2xl bg-black py-3.5 text-[17px] font-semibold tracking-[0.1px] text-white"
-            onClick={onCreateWallet}
+            onClick={() => {
+              trackEvent("create_wallet_clicked");
+              onCreateWallet();
+            }}
             type="button"
           >
             Create wallet

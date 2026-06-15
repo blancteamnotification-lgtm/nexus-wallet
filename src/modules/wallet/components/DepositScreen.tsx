@@ -6,6 +6,8 @@ import { truncateAddress } from "../data/wallets";
 import { ChainQrCode } from "./ChainQrCode";
 import { ChevronDownIcon, CopyIcon } from "@/shared/components/Icons";
 import { ScreenLayout } from "@/shared/components/ScreenLayout";
+import { trackEvent } from "@/shared/analytics/amplitude";
+import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
 
 type DepositScreenProps = {
   chain: Chain;
@@ -18,13 +20,20 @@ export function DepositScreen({
   onSelectChain,
   onCopy,
 }: DepositScreenProps) {
+  useTrackScreenView("deposit_viewed");
+
   return (
     <ScreenLayout>
       <div className="flex flex-1 flex-col gap-4 px-4 py-4 pt-[54px]">
         <div className="flex flex-col items-center gap-4">
           <button
             className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 p-1 pr-2"
-            onClick={onSelectChain}
+            onClick={() => {
+              trackEvent("deposit_chain_selector_clicked", {
+                chain_id: chain.id,
+              });
+              onSelectChain();
+            }}
             type="button"
           >
             <Image
@@ -48,7 +57,12 @@ export function DepositScreen({
 
           <button
             className="flex w-full items-center gap-4 rounded-full px-3 py-4"
-            onClick={() => onCopy(chain.address)}
+            onClick={() => {
+              trackEvent("deposit_copy_address_clicked", {
+                chain_id: chain.id,
+              });
+              onCopy(chain.address);
+            }}
             type="button"
           >
             <span className="flex-1 truncate text-left text-sm text-white/70">

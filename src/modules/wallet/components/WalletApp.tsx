@@ -16,6 +16,7 @@ import { WelcomeScreen } from "./WelcomeScreen";
 import { CopyToast } from "@/shared/components/CopyToast";
 import { useTelegramBackButton } from "@/shared/hooks/useTelegramBackButton";
 import { useTelegram } from "@/shared/hooks/useTelegram";
+import { trackEvent } from "@/shared/analytics/amplitude";
 
 const LOADER_DURATION_MS = 1000;
 
@@ -82,6 +83,10 @@ export function WalletApp() {
 
   const handleTelegramBack = useCallback(() => {
     haptic("light");
+    trackEvent("telegram_back_clicked", {
+      screen,
+      is_chain_sheet_open: isChainSheetOpen,
+    });
     if (isChainSheetOpen) {
       setIsChainSheetOpen(false);
       return;

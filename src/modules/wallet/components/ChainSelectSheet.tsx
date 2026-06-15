@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect } from "react";
 import { CHAINS, truncateAddress } from "../data/wallets";
 import type { Chain } from "../types";
 import { BottomSheet } from "@/shared/components/BottomSheet";
 import { CopyIcon, QrIcon } from "@/shared/components/Icons";
+import { trackEvent } from "@/shared/analytics/amplitude";
 
 type ChainSelectSheetProps = {
   isOpen: boolean;
@@ -21,8 +23,19 @@ export function ChainSelectSheet({
   onPick,
   onCopy,
 }: ChainSelectSheetProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+    trackEvent("chain_select_sheet_viewed");
+  }, [isOpen]);
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Select chain">
+    <BottomSheet
+      backdropClickedEvent="chain_select_sheet_backdrop_clicked"
+      closeClickedEvent="chain_select_sheet_close_clicked"
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Select chain"
+    >
       <div className="flex flex-col gap-2">
         {CHAINS.map((chain) => (
           <div
@@ -40,7 +53,13 @@ export function ChainSelectSheet({
             />
             <button
               className="min-w-0 flex-1 text-left"
-              onClick={() => onPick(chain)}
+              onClick={() => {
+                trackEvent("chain_select_item_clicked", {
+                  chain_id: chain.id,
+                  chain_name: chain.name,
+                });
+                onPick(chain);
+              }}
               type="button"
             >
               <p className="text-sm font-semibold text-white/90">{chain.name}</p>
@@ -52,7 +71,13 @@ export function ChainSelectSheet({
               <button
                 aria-label={`QR ${chain.name}`}
                 className="flex size-[38px] items-center justify-center rounded-xl bg-[#007aff]/15"
-                onClick={() => onPick(chain)}
+                onClick={() => {
+                  trackEvent("chain_select_qr_clicked", {
+                    chain_id: chain.id,
+                    chain_name: chain.name,
+                  });
+                  onPick(chain);
+                }}
                 type="button"
               >
                 <QrIcon />
@@ -60,7 +85,13 @@ export function ChainSelectSheet({
               <button
                 aria-label={`Copy ${chain.name}`}
                 className="flex size-[38px] items-center justify-center rounded-xl bg-[#007aff]/15"
-                onClick={() => onCopy(chain.address)}
+                onClick={() => {
+                  trackEvent("chain_select_copy_clicked", {
+                    chain_id: chain.id,
+                    chain_name: chain.name,
+                  });
+                  onCopy(chain.address);
+                }}
                 type="button"
               >
                 <CopyIcon />

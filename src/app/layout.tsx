@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { AmplitudeProvider } from "@/shared/components/AmplitudeProvider";
 import { criticalCss } from "@/shared/styles/critical-css";
 import "./globals.css";
 
@@ -31,7 +32,7 @@ export default function RootLayout({
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="afterInteractive"
         />
-        {children}
+        <AmplitudeProvider>{children}</AmplitudeProvider>
       </body>
     </html>
   );

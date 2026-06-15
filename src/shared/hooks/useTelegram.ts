@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { identifyAmplitudeUser } from "@/shared/analytics/amplitude";
 
 type TelegramUser = {
   id?: number;
@@ -28,6 +29,7 @@ type TelegramWebApp = {
   };
   initDataUnsafe?: {
     user?: TelegramUser;
+    start_param?: string;
   };
 };
 
@@ -74,8 +76,15 @@ export function useTelegram() {
       const tg = initTelegramWebApp();
       const user = tg?.initDataUnsafe?.user;
 
-      setUserId(user?.id ?? LOCAL_USER_ID);
+      const nextUserId = user?.id ?? LOCAL_USER_ID;
+
+      setUserId(nextUserId);
       setUserName(user?.first_name ?? user?.username ?? "Account 1");
+      identifyAmplitudeUser(nextUserId, {
+        telegram_username: user?.username,
+        telegram_first_name: user?.first_name,
+        start_param: tg?.initDataUnsafe?.start_param,
+      });
       setIsReady(true);
     };
 

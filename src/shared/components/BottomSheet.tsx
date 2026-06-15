@@ -2,15 +2,40 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { trackEvent } from "@/shared/analytics/amplitude";
+import type { AnalyticsEventName } from "@/shared/analytics/events";
 
 type BottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: ReactNode;
+  closeClickedEvent?: AnalyticsEventName;
+  backdropClickedEvent?: AnalyticsEventName;
 };
 
-export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetProps) {
+export function BottomSheet({
+  isOpen,
+  onClose,
+  title,
+  children,
+  closeClickedEvent,
+  backdropClickedEvent,
+}: BottomSheetProps) {
+  const handleBackdropClick = () => {
+    if (backdropClickedEvent) {
+      trackEvent(backdropClickedEvent);
+    }
+    onClose();
+  };
+
+  const handleCloseClick = () => {
+    if (closeClickedEvent) {
+      trackEvent(closeClickedEvent);
+    }
+    onClose();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -20,8 +45,7 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
             className="fixed inset-0 z-40 bg-[rgba(8,4,13,0.5)]"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
-            onClick={onClose}
-            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            onClick={handleBackdropClick}
           />
 
           <motion.div
@@ -39,7 +63,7 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
               <button
                 aria-label="Close"
                 className="flex size-6 items-center justify-center rounded-full bg-white/5"
-                onClick={onClose}
+                onClick={handleCloseClick}
                 type="button"
               >
                 <svg fill="none" height="12" viewBox="0 0 8 12" width="8">

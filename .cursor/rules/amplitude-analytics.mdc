@@ -1,0 +1,50 @@
+---
+description: Amplitude analytics events for screens and buttons
+globs: src/**/*.tsx
+alwaysApply: false
+---
+
+# Amplitude Analytics
+
+При добавлении нового экрана или кнопки обязательно добавляй Amplitude-событие.
+
+## Правила именования
+
+- Экраны: `{screen_name}_viewed` — через `useTrackScreenView` при монтировании
+- Кнопки: `{action_name}_clicked` — через `trackEvent` в `onClick` до вызова бизнес-логики
+- Sheet/modal как экран: `{sheet_name}_viewed` при открытии (`useEffect` на `isOpen`)
+
+## Где хранить
+
+1. Добавь событие в `src/shared/analytics/events.ts` (name + description)
+2. Вызови `trackEvent` или `useTrackScreenView` в компоненте
+3. Для кнопок с контекстом передавай properties (`chain_id`, `source` и т.д.)
+
+## Запрещено
+
+- Не отправляй адреса кошельков, seed-фразы и приватные ключи
+- Не хардкодь строки событий — только `AnalyticsEventName` из `events.ts`
+- Не пропускай события на новых интерактивных элементах (`button`, кликабельные области)
+
+## Пример
+
+```tsx
+import { trackEvent } from "@/shared/analytics/amplitude";
+import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
+
+export function NewScreen({ onSubmit }: Props) {
+  useTrackScreenView("new_screen_viewed");
+
+  return (
+    <button
+      onClick={() => {
+        trackEvent("new_screen_submit_clicked");
+        onSubmit();
+      }}
+      type="button"
+    >
+      Submit
+    </button>
+  );
+}
+```
