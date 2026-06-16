@@ -5,7 +5,7 @@ export const CHAINS: Chain[] = [
     id: "solana",
     name: "Solana",
     address: "DrkXj6rAfPxZGS335WZH1iSaHCtp7o4iLhY7oKJwqTeS",
-    icon: "/images/solana-logo.png",
+    icon: "/images/Solana-Logo.png",
     warningNetwork: "Solana",
   },
   {
@@ -57,7 +57,7 @@ export const POPULAR_ASSETS: Asset[] = [
     id: "sol",
     name: "Solana",
     symbol: "SOL",
-    icon: "/images/solana-logo.png",
+    icon: "/images/Solana-Logo.png",
   },
   {
     id: "usdc",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ScreenLayout } from "@/shared/components/ScreenLayout";
 import { trackEvent } from "@/shared/analytics/amplitude";
 import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
+import { readClipboardText } from "@/shared/utils/clipboard";
 import type { MiningImportType } from "../types";
 import { MiningHeader } from "./MiningHeader";
 
@@ -30,12 +31,8 @@ export function MiningImportScreen({
   );
 
   const handlePaste = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      if (text) setValue(text);
-    } catch {
-      /* clipboard unavailable */
-    }
+    const text = await readClipboardText();
+    if (text) setValue(text);
   };
 
   return (

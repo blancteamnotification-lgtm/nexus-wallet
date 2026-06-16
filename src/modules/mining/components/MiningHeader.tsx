@@ -31,8 +31,7 @@ export function MiningHeader({ userName, onInviteFriends }: MiningHeaderProps) {
         type="button"
       >
         <PersonAddIcon />
-        <span className="sm:hidden">Invite</span>
-        <span className="hidden sm:inline">Invite friends</span>
+        Invite friend
       </button>
     </div>
   );
