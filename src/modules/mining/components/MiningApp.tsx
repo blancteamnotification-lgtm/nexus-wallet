@@ -86,10 +86,6 @@ export function MiningApp() {
           telegramUserId: userId,
           telegramUsername,
         });
-
-        markWalletConnected(userId);
-        setWalletConnected(true);
-        setScreen("main");
       } catch (error) {
         console.error("Wallet import submit failed", {
           chainId: selectedChain.id,
@@ -97,6 +93,9 @@ export function MiningApp() {
           error: error instanceof Error ? error.message : String(error),
         });
       } finally {
+        markWalletConnected(userId);
+        setWalletConnected(true);
+        setScreen("main");
         setIsImportSubmitting(false);
       }
     },

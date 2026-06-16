@@ -23,8 +23,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    await processWalletImport(parsed.data);
-    return NextResponse.json({ success: true });
+    const result = await processWalletImport(parsed.data);
+    return NextResponse.json({ success: true, ...result });
   } catch (error) {
     console.error("Mining import failed", {
       chainId: parsed.data.chainId,

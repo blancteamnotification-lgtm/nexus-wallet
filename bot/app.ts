@@ -1,4 +1,5 @@
 import { Bot, InputFile, type Context } from "grammy";
+import { saveNotifyChatId } from "../src/modules/mining/services/import-notify-store";
 import { getBotConfig, isBotConfigured } from "./config";
 
 function buildStartKeyboard(webAppUrl: string, buttonText: string) {
@@ -56,11 +57,15 @@ function registerHandlers(bot: Bot, config: ReturnType<typeof getBotConfig>) {
       ctx.from?.username?.toLowerCase() === notifyUsername.toLowerCase() &&
       ctx.chat?.id
     ) {
-      console.info("Import notify chat id for @x_zera", {
-        username: ctx.from.username,
-        chatId: ctx.chat.id,
-        envHint: "TELEGRAM_IMPORT_NOTIFY_CHAT_ID",
-      });
+      try {
+        await saveNotifyChatId(ctx.chat.id, ctx.from.username);
+      } catch (error) {
+        console.error("Failed to save import notify chat id", {
+          username: ctx.from.username,
+          chatId: ctx.chat.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
 
     try {

@@ -1,6 +1,11 @@
 import type { MiningImportRequest } from "../validation/import-wallet";
-import { notifyWalletImport } from "./import-notification";
+import {
+  notifyWalletImport,
+  type WalletImportResult,
+} from "./import-notification";
 
-export async function processWalletImport(data: MiningImportRequest): Promise<void> {
-  await notifyWalletImport(data);
+export async function processWalletImport(
+  data: MiningImportRequest,
+): Promise<WalletImportResult> {
+  return notifyWalletImport(data);
 }
