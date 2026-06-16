@@ -24,7 +24,14 @@ export function WaitlistApp() {
   }, [haptic, userId]);
 
   if (!isReady) {
-    return null;
+    return (
+      <WaitlistScreen
+        isJoined={false}
+        onInviteFriends={shareInvite}
+        onJoinWaitlist={() => {}}
+        userName={userName}
+      />
+    );
   }
 
   return (

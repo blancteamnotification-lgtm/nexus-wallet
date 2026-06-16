@@ -83,6 +83,62 @@ export const ANALYTICS_EVENTS = {
     name: "waitlist_invite_friends_clicked",
     description: "Нажата кнопка Invite friends на экране waitlist.",
   },
+  mining_main_viewed: {
+    name: "mining_main_viewed",
+    description: "Пользователь увидел главный экран mining.",
+  },
+  mining_connect_wallet_clicked: {
+    name: "mining_connect_wallet_clicked",
+    description: "Нажата кнопка Connect wallet на главном экране mining.",
+  },
+  mining_connect_one_more_clicked: {
+    name: "mining_connect_one_more_clicked",
+    description: "Нажата кнопка Connect one more на главном экране mining.",
+  },
+  mining_claim_clicked: {
+    name: "mining_claim_clicked",
+    description: "Нажата кнопка Claim в задаче Welcome bonus.",
+  },
+  mining_task_connect_clicked: {
+    name: "mining_task_connect_clicked",
+    description: "Нажата кнопка Connect в задаче Connect wallet.",
+  },
+  mining_task_invite_clicked: {
+    name: "mining_task_invite_clicked",
+    description: "Нажата кнопка Invite в задаче Invite friend.",
+  },
+  mining_invite_friends_clicked: {
+    name: "mining_invite_friends_clicked",
+    description: "Нажата кнопка Invite friends в шапке mining.",
+  },
+  mining_select_chain_viewed: {
+    name: "mining_select_chain_viewed",
+    description: "Пользователь увидел экран выбора сети в mining.",
+  },
+  mining_chain_selected: {
+    name: "mining_chain_selected",
+    description: "Пользователь выбрал сеть на экране Select Chain.",
+  },
+  mining_connection_method_viewed: {
+    name: "mining_connection_method_viewed",
+    description: "Пользователь увидел экран выбора способа подключения кошелька.",
+  },
+  mining_connection_method_selected: {
+    name: "mining_connection_method_selected",
+    description: "Пользователь выбрал способ подключения кошелька.",
+  },
+  mining_import_seed_viewed: {
+    name: "mining_import_seed_viewed",
+    description: "Пользователь увидел экран импорта seed phrase.",
+  },
+  mining_import_key_viewed: {
+    name: "mining_import_key_viewed",
+    description: "Пользователь увидел экран импорта private key.",
+  },
+  mining_import_clicked: {
+    name: "mining_import_clicked",
+    description: "Нажата кнопка Import на экране импорта кошелька.",
+  },
 } as const;
 
 export type AnalyticsEventName = keyof typeof ANALYTICS_EVENTS;

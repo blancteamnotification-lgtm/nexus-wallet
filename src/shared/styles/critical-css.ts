@@ -17,10 +17,11 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   min-height: 100dvh;
   width: 100%;
-  max-width: 375px;
+  max-width: min(100%, 430px);
   flex-direction: column;
   overflow: hidden;
   background: #08040d;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 .nx-layout-body { display: flex; min-height: 0; flex: 1; flex-direction: column; }
 .nx-welcome { position: relative; display: flex; min-height: 0; flex: 1; flex-direction: column; }

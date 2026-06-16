@@ -50,7 +50,7 @@ export function BottomSheet({
 
           <motion.div
             animate={{ y: 0 }}
-            className="fixed bottom-0 left-1/2 z-50 flex max-h-[85dvh] w-full max-w-[375px] -translate-x-1/2 flex-col rounded-t-[20px] bg-[#171717] shadow-[0_4px_12px_rgba(8,4,13,0.1),0_0_2px_rgba(8,4,13,0.1)]"
+            className="fixed bottom-0 left-1/2 z-50 flex max-h-[85dvh] w-full max-w-[min(100%,430px)] -translate-x-1/2 flex-col rounded-t-[20px] bg-[#171717] shadow-[0_4px_12px_rgba(8,4,13,0.1),0_0_2px_rgba(8,4,13,0.1)]"
             exit={{ y: "100%" }}
             initial={{ y: "100%" }}
             transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}

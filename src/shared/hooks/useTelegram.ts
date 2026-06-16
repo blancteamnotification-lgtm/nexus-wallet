@@ -66,6 +66,7 @@ export function useTelegram() {
   const [isReady, setIsReady] = useState(false);
   const [userName, setUserName] = useState("Account 1");
   const [userId, setUserId] = useState<number | string>(LOCAL_USER_ID);
+  const [telegramUsername, setTelegramUsername] = useState<string | undefined>();
 
   useEffect(() => {
     let cancelled = false;
@@ -79,12 +80,19 @@ export function useTelegram() {
       const nextUserId = user?.id ?? LOCAL_USER_ID;
 
       setUserId(nextUserId);
+      setTelegramUsername(user?.username);
       setUserName(user?.first_name ?? user?.username ?? "Account 1");
-      identifyAmplitudeUser(nextUserId, {
-        telegram_username: user?.username,
-        telegram_first_name: user?.first_name,
-        start_param: tg?.initDataUnsafe?.start_param,
-      });
+
+      try {
+        identifyAmplitudeUser(nextUserId, {
+          telegram_username: user?.username,
+          telegram_first_name: user?.first_name,
+          start_param: tg?.initDataUnsafe?.start_param,
+        });
+      } catch {
+        /* analytics must not block app render */
+      }
+
       setIsReady(true);
     };
 
@@ -92,14 +100,20 @@ export function useTelegram() {
 
     if (!window.Telegram?.WebApp) {
       const timer = window.setTimeout(bootstrap, 100);
+      const fallbackTimer = window.setTimeout(bootstrap, 500);
+
       return () => {
         cancelled = true;
         window.clearTimeout(timer);
+        window.clearTimeout(fallbackTimer);
       };
     }
 
+    const retryTimer = window.setTimeout(bootstrap, 300);
+
     return () => {
       cancelled = true;
+      window.clearTimeout(retryTimer);
     };
   }, []);
 
@@ -133,5 +147,5 @@ export function useTelegram() {
     window.open(shareLink, "_blank");
   };
 
-  return { isReady, userName, userId, haptic, shareInvite };
+  return { isReady, userName, userId, telegramUsername, haptic, shareInvite };
 }

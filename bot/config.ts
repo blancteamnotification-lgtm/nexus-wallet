@@ -1,7 +1,15 @@
 export type BotConfig = {
   token: string;
   webAppUrl: string;
-  welcomeImagePath: string;
+  caption: string;
+  imagePath: string;
+  buttonText: string;
+};
+
+export type StartMessageConfig = {
+  caption: string;
+  imagePath: string;
+  buttonText: string;
 };
 
 function requireEnv(name: string): string {
@@ -62,7 +70,7 @@ export function getBotConfig(): BotConfig {
   return {
     token: requireEnv("TELEGRAM_BOT_TOKEN"),
     webAppUrl,
-    welcomeImagePath: `${process.cwd()}/public/images/welcome-bot.png`,
+    ...getStartMessageConfig(),
   };
 }
 
@@ -71,6 +79,55 @@ export const startMessageCaption = `🚀 WELCOME TO NEXUS!
 The new generation crypto wallet where you can earn daily APY, spend, get cashback, invest.
 
 MAKE YOUR FIRST DEPOSIT TODAY AND GET $25 BONUS ON YOUR BALANCE INSTANTLY`;
+
+export const miningStartMessageCaption = `🔥 Early Access Is Live
+
+Mine future tokens using the strength of your crypto portfolio.
+
+No tapping.
+No staking.
+No deposits.
+
+Simply connect your wallet and start earning.
+
+How it works:
+
+• Connect your wallet
+• Receive Mining Power based on your portfolio value
+• Complete a mining cycle every 6 hours
+• Claim rewards and continue mining
+
+Early miners will be eligible for future token distribution and ecosystem rewards.
+
+The earlier you start, the more you can accumulate.
+
+👇 Launch the app and activate your Mining Power.`;
+
+function resolveAppMode(): "wallet" | "waitlist" | "mining" {
+  const mode = process.env.NEXT_PUBLIC_APP_MODE;
+
+  if (mode === "waitlist" || mode === "mining") {
+    return mode;
+  }
+
+  return "wallet";
+}
+
+export function getStartMessageConfig(): StartMessageConfig {
+  if (resolveAppMode() === "mining") {
+    return {
+      caption: miningStartMessageCaption,
+      imagePath: `${process.cwd()}/public/images/mining-start-pic.png`,
+      buttonText: "Launch Mining",
+    };
+  }
+
+  return {
+    caption: startMessageCaption,
+    imagePath: `${process.cwd()}/public/images/welcome-bot.png`,
+    buttonText: "Open Nexus Wallet",
+  };
+}
 
 export function getWebhookUrl(): string {
   const { webAppUrl } = getBotConfig();

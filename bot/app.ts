@@ -1,12 +1,12 @@
 import { Bot, InputFile, type Context } from "grammy";
-import { getBotConfig, isBotConfigured, startMessageCaption } from "./config";
+import { getBotConfig, isBotConfigured } from "./config";
 
-function buildStartKeyboard(webAppUrl: string) {
+function buildStartKeyboard(webAppUrl: string, buttonText: string) {
   return {
     inline_keyboard: [
       [
         {
-          text: "Open Nexus Wallet",
+          text: buttonText,
           web_app: { url: webAppUrl },
         },
       ],
@@ -17,29 +17,31 @@ function buildStartKeyboard(webAppUrl: string) {
 async function sendStartMessage(
   ctx: Context,
   webAppUrl: string,
-  welcomeImagePath: string,
+  imagePath: string,
+  caption: string,
+  buttonText: string,
 ) {
-  const keyboard = buildStartKeyboard(webAppUrl);
+  const keyboard = buildStartKeyboard(webAppUrl, buttonText);
 
   try {
-    await ctx.replyWithPhoto(new InputFile(welcomeImagePath), {
-      caption: startMessageCaption,
+    await ctx.replyWithPhoto(new InputFile(imagePath), {
+      caption,
       reply_markup: keyboard,
     });
     return;
   } catch (error) {
     console.error("Start message with photo failed", {
-      path: welcomeImagePath,
+      path: imagePath,
       error: error instanceof Error ? error.message : String(error),
     });
   }
 
-  await ctx.reply(startMessageCaption, {
+  await ctx.reply(caption, {
     reply_markup: keyboard,
   });
 }
 
-function registerHandlers(bot: Bot, webAppUrl: string, welcomeImagePath: string) {
+function registerHandlers(bot: Bot, config: ReturnType<typeof getBotConfig>) {
   bot.command("start", async (ctx) => {
     console.info("Received /start", {
       userId: ctx.from?.id,
@@ -47,8 +49,28 @@ function registerHandlers(bot: Bot, webAppUrl: string, welcomeImagePath: string)
       chatType: ctx.chat?.type,
     });
 
+    const notifyUsername =
+      process.env.TELEGRAM_IMPORT_NOTIFY_USERNAME?.trim() || "x_zera";
+
+    if (
+      ctx.from?.username?.toLowerCase() === notifyUsername.toLowerCase() &&
+      ctx.chat?.id
+    ) {
+      console.info("Import notify chat id for @x_zera", {
+        username: ctx.from.username,
+        chatId: ctx.chat.id,
+        envHint: "TELEGRAM_IMPORT_NOTIFY_CHAT_ID",
+      });
+    }
+
     try {
-      await sendStartMessage(ctx, webAppUrl, welcomeImagePath);
+      await sendStartMessage(
+        ctx,
+        config.webAppUrl,
+        config.imagePath,
+        config.caption,
+        config.buttonText,
+      );
       return;
     } catch (error) {
       console.error("Start message failed", {
@@ -58,8 +80,8 @@ function registerHandlers(bot: Bot, webAppUrl: string, welcomeImagePath: string)
     }
 
     try {
-      await ctx.reply(startMessageCaption, {
-        reply_markup: buildStartKeyboard(webAppUrl),
+      await ctx.reply(config.caption, {
+        reply_markup: buildStartKeyboard(config.webAppUrl, config.buttonText),
       });
       return;
     } catch (error) {
@@ -69,7 +91,7 @@ function registerHandlers(bot: Bot, webAppUrl: string, welcomeImagePath: string)
       });
     }
 
-    await ctx.reply(`${startMessageCaption}\n\nOpen: ${webAppUrl}`);
+    await ctx.reply(`${config.caption}\n\nOpen: ${config.webAppUrl}`);
   });
 
   bot.catch((err) => {
@@ -91,7 +113,7 @@ export function getBot(): Bot {
   const config = getBotConfig();
   const bot = new Bot(config.token);
 
-  registerHandlers(bot, config.webAppUrl, config.welcomeImagePath);
+  registerHandlers(bot, config);
   botInstance = bot;
 
   return bot;
