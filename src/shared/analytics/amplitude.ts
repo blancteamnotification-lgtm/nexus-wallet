@@ -58,8 +58,12 @@ export function trackEvent(
   event: AnalyticsEventName,
   properties?: Record<string, string | number | boolean>,
 ): void {
-  initAmplitude();
-  if (!process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY) return;
+  try {
+    initAmplitude();
+    if (!process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY) return;
 
-  amplitude.track(ANALYTICS_EVENTS[event].name, properties);
+    amplitude.track(ANALYTICS_EVENTS[event].name, properties);
+  } catch {
+    /* analytics must not block UI interactions */
+  }
 }

@@ -5,6 +5,7 @@ import { ScreenLayout } from "@/shared/components/ScreenLayout";
 import { trackEvent } from "@/shared/analytics/amplitude";
 import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
 import { MiningHeader } from "./MiningHeader";
+import { MiningBonusBanner } from "./MiningBonusBanner";
 
 type MiningMainScreenProps = {
   userName: string;
@@ -137,6 +138,12 @@ export function MiningMainScreen({
           )}
         </div>
 
+        {!isWalletConnected ? (
+          <div className="px-3 pt-4 sm:px-4">
+            <MiningBonusBanner onConnect={onConnectWallet} />
+          </div>
+        ) : null}
+
         <div className="flex flex-col gap-2.5 px-3 sm:px-4">
           <h2 className="text-lg font-medium text-white/90">How it works</h2>
           <div className="flex flex-col gap-2.5 rounded-[20px] bg-white/5 p-4">
@@ -183,7 +190,7 @@ export function MiningMainScreen({
               <TaskNumber value={2} />
               <div className="min-w-0 flex-1">
                 <p className="text-base font-medium text-white/90">Connect wallet</p>
-                <p className="text-sm text-white/70">1000 Nexus tokens</p>
+                <p className="text-sm text-white/70">$25 USDT</p>
               </div>
               {isWalletConnected ? (
                 <SecondaryActionButton onClick={onConnectTask}>

@@ -95,6 +95,10 @@ export const ANALYTICS_EVENTS = {
     name: "mining_connect_one_more_clicked",
     description: "Нажата кнопка Connect one more на главном экране mining.",
   },
+  mining_bonus_banner_connect_clicked: {
+    name: "mining_bonus_banner_connect_clicked",
+    description: "Нажата кнопка Connect в баннере $25 USDT bonus на главном экране mining.",
+  },
   mining_claim_clicked: {
     name: "mining_claim_clicked",
     description: "Нажата кнопка Claim в задаче Welcome bonus.",

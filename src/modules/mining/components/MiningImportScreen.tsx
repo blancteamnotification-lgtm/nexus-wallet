@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ScreenLayout } from "@/shared/components/ScreenLayout";
 import { trackEvent } from "@/shared/analytics/amplitude";
 import { useTrackScreenView } from "@/shared/analytics/useTrackScreenView";
@@ -24,15 +24,30 @@ export function MiningImportScreen({
   onImport,
 }: MiningImportScreenProps) {
   const [value, setValue] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isSeed = importType === "seed";
 
   useTrackScreenView(
     isSeed ? "mining_import_seed_viewed" : "mining_import_key_viewed",
   );
 
-  const handlePaste = async () => {
-    const text = await readClipboardText();
-    if (text) setValue(text);
+  const handlePaste = () => {
+    void readClipboardText(textareaRef.current).then((text) => {
+      if (text) {
+        setValue(text);
+        return;
+      }
+
+      textareaRef.current?.focus();
+    });
+  };
+
+  const handleTextareaPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const text = event.clipboardData.getData("text/plain");
+    if (!text.trim()) return;
+
+    event.preventDefault();
+    setValue(text);
   };
 
   return (
@@ -50,9 +65,11 @@ export function MiningImportScreen({
           <textarea
             className="min-h-[100px] w-full resize-none rounded-2xl border border-white/15 bg-transparent p-3 text-sm text-white/90 outline-none placeholder:text-white/50"
             onChange={(event) => setValue(event.target.value)}
+            onPaste={handleTextareaPaste}
             placeholder={
               isSeed ? "Paste your seed phrase" : "Paste your privat key"
             }
+            ref={textareaRef}
             value={value}
           />
         </div>

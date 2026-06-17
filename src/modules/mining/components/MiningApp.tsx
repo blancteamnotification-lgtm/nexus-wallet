@@ -109,22 +109,6 @@ export function MiningApp() {
     ],
   );
 
-  if (!isReady) {
-    return (
-      <MiningMainScreen
-        balance={0}
-        isWalletConnected={false}
-        isWelcomeBonusClaimed={false}
-        onClaimWelcomeBonus={() => {}}
-        onConnectTask={openConnectFlow}
-        onConnectWallet={openConnectFlow}
-        onInviteFriends={shareInvite}
-        onInviteTask={shareInvite}
-        userName={userName}
-      />
-    );
-  }
-
   if (screen === "select-chain") {
     return (
       <MiningSelectChainScreen

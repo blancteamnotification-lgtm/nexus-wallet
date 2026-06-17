@@ -15,7 +15,8 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
   margin: 0 auto;
   display: flex;
-  min-height: 100dvh;
+  height: 100dvh;
+  max-height: 100dvh;
   width: 100%;
   max-width: min(100%, 430px);
   flex-direction: column;
@@ -23,7 +24,13 @@ button { font-family: inherit; cursor: pointer; }
   background: #08040d;
   padding-top: env(safe-area-inset-top, 0px);
 }
-.nx-layout-body { display: flex; min-height: 0; flex: 1; flex-direction: column; }
+.nx-layout-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
 .nx-welcome { position: relative; display: flex; min-height: 0; flex: 1; flex-direction: column; }
 .nx-welcome-content { position: relative; z-index: 10; display: flex; flex-direction: column; gap: 8px; padding: 54px 16px 0; }
 .nx-welcome-title { margin: 0; font-size: 38px; font-weight: 900; text-transform: uppercase; line-height: 1; letter-spacing: -0.4px; color: #fff; }
