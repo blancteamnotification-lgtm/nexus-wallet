@@ -117,7 +117,7 @@ export function getStartMessageConfig(): StartMessageConfig {
   if (resolveAppMode() === "mining") {
     return {
       caption: miningStartMessageCaption,
-      imagePath: `${process.cwd()}/public/images/mining-start-pic.png`,
+      imagePath: `${process.cwd()}/public/images/mining-start-pic-1.png`,
       buttonText: "Launch Mining",
     };
   }
